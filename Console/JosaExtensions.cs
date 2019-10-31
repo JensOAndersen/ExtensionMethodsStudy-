@@ -16,22 +16,17 @@ namespace ConsoleApp
         /// <returns>a match of the predicate</returns>
         public static T FindWhereInChildren<T>(this T child, Func<T, bool> predicate, Func<T, IEnumerable<T>> getChildren)
         {
-            if (predicate(child)) //predicate looks like: 'x => x.id == 1' or 'x => x.name == 'hansel'
-            {
+            if (predicate(child))
                 return child;
-            }
-            else
+
+            foreach (var item in getChildren(child))
             {
-                foreach (var item in getChildren(child)) //getChildren is 'x => x.children
-                {
-                    return item.FindWhereInChildren(predicate, getChildren);
-                }
+                var res = item.FindWhereInChildren(predicate, getChildren);
+                if (res != null)
+                    return res;
             }
 
-            return default(T);
-            /*
-             The method is recursive as it needs to look through all children of the given object.
-             */
+            return default;
         }
 
         /// <summary>
